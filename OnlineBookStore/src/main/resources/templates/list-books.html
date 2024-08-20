@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+	<title>Book</title>
+	<style>
+	   /* Custom CSS for minimal design */
+	   .container {
+	     margin-top: 20px;
+	   }
+	   h3 {
+	     margin-bottom: 10px;
+	   }
+	   /* Move logout button to top right */
+	   form {
+	     position: absolute;
+	     top: 10px;
+	     right: 10px;
+	   }
+	   /* Adjust table styles */
+	   .table {
+	     margin-top: 20px;
+	   }
+	   /* Remove table borders */
+	   .table-bordered,
+	   .table-bordered th,
+	   .table-bordered td {
+	     border: none;
+	   }
+	   /* Add subtle background color to table headers */
+	   .table thead {
+	     background-color: rgb(224, 222, 243);
+	   }
+	   /* Add padding to table cells */
+	   .table td,
+	   .table th {
+	     padding: 8px;
+	   }
+	   /* Add margin to Add Book button */
+	   .btn-primary {
+	     margin-bottom: 10px;
+	   }
+	   body,
+	   .table {
+	     font-family: 'Roboto', sans-serif !important;
+	   }
+	   /* Change delete button color to dark purple */
+	   .btn-danger {
+	     background-color: rgb(134, 110, 169);
+	     border-color: rgb(134, 110, 169);
+		 
+	   }
+	   /* Change update button color to light gray */
+	   .btn-info {
+	     background-color: #f1f1f1;
+	     border-color: #f1f1f1;
+	   }
+	 
+	   /* Change add button color to pastel blue */
+	   .btn-primary.btn-sm , #logout{
+	     background-color: rgb(166, 184, 193);
+	     border-color: rgb(166, 184, 193);
+		 color: #f1f1f1;
+		 border-radius: 5px;
+	   }
+	   /* Change button color on hover */
+	   .btn-primary.btn-sm:hover,
+	   .btn-danger:hover,
+	   .btn-info:hover {
+	     background-color: inherit;
+	     border-color: inherit;
+	     color: inherit;
+	   }
+	   /* Change button color on click */
+	   .btn-primary.btn-sm:active,
+	   .btn-danger:active,
+	   .btn-info:active {
+	     background-color: inherit;
+	     border-color: inherit;
+	     color: inherit;
+	   }
+	   
+	</style>
+</head>
+
+<body>
+
+<div class="container">
+
+	<h2>Welcome <span sec:authentication="principal.username" !></h2>
+<div sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_EMPLOYEE','ROLE_MANAGER')">
+	
+		Your Role(s): <span sec:authentication="principal.authorities"></span>
+
+		<hr>
+		<nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+		  <div class="container-fluid">
+		    <button
+		      data-mdb-collapse-init
+		      class="navbar-toggler"
+		      type="button"
+		      data-mdb-target="#navbarNav"
+		      aria-controls="navbarNav"
+		      aria-expanded="false"
+		      aria-label="Toggle navigation"
+		    >
+		      <i class="fas fa-bars"></i>
+		    </button>
+		    <div class="collapse navbar-collapse" id="navbarNav">
+		      <ul class="navbar-nav">
+
+		        <li class="nav-item">
+		          <a class="nav-link" th:href="@{/hr}">Human Resource</a>
+		        </li>
+				<li class="nav-item">
+						          <a class="nav-link" th:href="@{/it}">IT</a>
+						        </li>
+		        <li class="nav-item">
+		          <a class="nav-link" th:href="@{/management}">Management</a>
+		        </li>
+		     
+		      </ul>
+		    </div>
+		  </div>
+		</nav>
+	
+			
+		<hr>
+		
+		<p>
+		</p>
+		</div>
+		<form action="#" th:action="@{/logout}" method="post">
+								<input  id="logout" type="submit" value="Logout" />
+							 </form>
+
+	
+	
+	<!-- Add a button-->
+	<a th:href="@{/showFormForAdd}"
+	   class="btn btn-primary btn-sm mb-3" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_EMPLOYEE','ROLE_MANAGER')">
+		Add Book
+	</a> 
+
+	<table class="table table-hover">
+		<thead class="table">
+		<tr>
+			<th>ID</th>
+			<th>Title</th>
+			<th>Author</th>
+			<th>ISBN</th>
+			<th>Price</th>
+			<th>Select</th>
+			<th sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_EMPLOYEE','ROLE_MANAGER')">Action</th>
+
+			
+		</tr>
+		</thead>
+
+		<tbody>
+		<tr th:each="tempBook : ${book}">
+<td><a th:href="@{/book-details(bookId=${tempBook.id})}"><span th:text="${tempBook.id}"/></a></td>
+			<td th:text="${tempBook.title}" />
+			<td th:text="${tempBook.author}" />
+			<td th:text="${tempBook.ISBN}" />
+			<td th:text="'$'+${tempBook.price}" />
+			
+			<td >
+			<input sec:authorize="hasRole('ROLE_USER')" type="checkbox" name="selectedBooks" th:value="${tempBook.id}" />
+			</td>
+			<!-- Add update button/link -->
+			<!--Visible only to ADMIN MANAGER EMPLOYEE-->
+			<td sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_EMPLOYEE','ROLE_MANAGER')">
+				<a th:href="@{/showFormForUpdate(bookId=${tempBook.id})}"
+				   class="btn btn-info btn-sm">
+					Update
+				</a>
+
+				<!-- Add "delete" button/link -->
+				<a th:href="@{/delete(bookId=${tempBook.id})}"
+				   class="btn btn-danger btn-sm"
+				   onclick="if (!(confirm('Are you sure ?'))) return false">
+					Delete
+				</a>
+				
+			</td>
+
+		</tr>
+	
+
+
+		</table>
+</div>
+
+</body>
+</html>
+
+
+

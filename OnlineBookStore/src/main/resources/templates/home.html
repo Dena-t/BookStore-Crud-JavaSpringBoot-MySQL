@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title> Security Test</title>
+	</head>
+<body>
+	
+	<div class="container">
+
+		<h3>Books</h3>
+		<hr>
+
+		<a th:href="@{/showMyLoginPage}"
+			   class="btn btn-primary btn-sm mb-3">
+				Login
+			</a>
+		
+		<!-- Add a button
+		<a th:href="@{/showFormForAdd}"
+		   class="btn btn-primary btn-sm mb-3">
+			Add Book
+		</a> -->
+
+		<table class="table table-bordered table-striped">
+			<thead class="table-dark">
+			<tr>
+				<th>Title</th>
+				<th>Author</th>
+				<th>ISBN</th>
+				
+			</tr>
+			</thead>
+
+			<tbody>
+			<tr th:each="tempBook : ${book}">
+
+				<td th:text="${tempBook.title}" />
+				<td th:text="${tempBook.author}" />
+				<td th:text="${tempBook.ISBN}" />
+
+				<!-- Add update button/link -->
+				<td>
+					<a th:href="@{/showFormForUpdate(bookId=${tempBook.id})}"
+					   class="btn btn-info btn-sm">
+						Update
+					</a>
+
+					<!-- Add "delete" button/link -->
+					<a th:href="@{/delete(bookId=${tempBook.id})}"
+					   class="btn btn-danger btn-sm"
+					   onclick="if (!(confirm('Are you sure you want to delete this Book?'))) return false">
+						Delete
+					</a>
+				</td>
+
+			</tr>
+			</tbody>
+		</table>
+
+	</div>
+	<h2>Welcome!</h2>
+	<hr>
+	<p>
+		User: <span sec:authentication="principal.username"></span>
+		<br><br>
+		Role(s): <span sec:authentication="principal.authorities"></span>
+		
+	</p>
+	<hr>
+	<p>
+			<a th:href="@{/systems}">IT Leaders</a>
+		</p>
+	<p>
+		<a th:href="@{/leaders}">Leadership Meeting</a>
+	</p>
+	<form action="#" th:action="@{/logout}" method="post">
+							<input type="submit" value="Logout" />
+						 </form>
+	
+	
+</body>
+
+
+
+
+
+
+</html>
